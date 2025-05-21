@@ -1,31 +1,55 @@
 import axios from "axios";
 import React, { useState, useEffect } from "react";
+import { toast } from "react-toastify";
 
   
 const BookPreview = ({ book }) => {
-   const [cart, setCart] = useState([]);
-    const [buttontext,SetButtontext] = useState("Add to Cart")
-    const userId = "123";
+  const user = JSON.parse(localStorage.getItem("user"));
   
-   function Handlecart() {
-    setInterval(() => {
-      SetButtontext("Add to cart")
-      
-    }, 3000);
-     SetButtontext("Added")
-    }
-    const addToCart = async (book) => {
-      try {
-        const response = await axios.post("http://localhost:8080/api/cart", { userId, book });
-        setCart(response.data);
-        console.log(response.data);
-        
-      } catch (error) {
-        console.error("Error adding to cart:", error);
-      }
+  const handleAddToCart = async (book) => {
+  if (!user) {
+    toast.error("Please login first!");
+    return;
+  }
+
+  try {
+    const payload = {
+      userId: user.userId,
+      bookId: book._id,
+      title: book.title,
+      author: book.author,
+      photo:book.photo,
+      price: book.price || 899, // fallback price
+      quantity: 1,
     };
+    // console.log(payload);
     
    
+    
+
+     const response = await axios.post("http://localhost:8080/api/cart", {
+      userId: user.userId, // Make sure this is the correct field
+      bookId: book._id,
+      title: book.title,
+      author:book.author,
+      photo:book.photo,
+      price: book.price
+    }, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`
+      }
+    });
+
+    
+    toast.success("Book added to cart!");
+  } catch (error) {
+    toast.error("Failed to add to cart");
+    console.error(error);
+  }
+};
+    const [buttontext,SetButtontext] = useState("Add to Cart")
+  
+
   return (
     
     <div className="bg-gray-100 shadow-lg w-[18rem] ml-5 mr-5 rounded-lg h-[32rem] overflow-hidden hover:shadow-xl transition-shadow duration-300">
@@ -43,7 +67,7 @@ const BookPreview = ({ book }) => {
           <span className="text-lg font-bold text-orange-600">
             ₹{book.price}
           </span>
-          <button onClick={() => addToCart(book)} className="px-4 py-2 bg-orange-500 text-white hover:bg-gray-600 transition rounded-lg">
+          <button onClick={() => handleAddToCart(book)} className="px-4 py-2 bg-orange-500 text-white hover:bg-gray-600 transition rounded-lg">
             {buttontext}
           </button>
         </div>

@@ -1,55 +1,77 @@
+const { default: mongoose } = require("mongoose");
 const Cart = require("../models/cart.module");
-let carts = {};
-const fetchCart = async (req, res) => {
-    try {
-        const { userId } = req.params;
-        const cart = await Cart.findOne({ userId });
-        if (!cart) {
-          return res.status(404).json({ message: "Cart not found." });
-        }
-        res.json(cart.items);
-      } catch (error) {
-        console.error("Error fetching cart:", error);
-        res.status(500).json({ error: "Failed to fetch cart" });
-      }
-  }
 
-  const postCart = async (req, res) => {
+const addToCart = async (req, res) => {
+  const { userId, bookId } = req.body;
+
+  try {
+    // Check if the book already exists in the user's cart
+    const existingCartItem = await Cart.findOne({ userId, bookId });
+
+    if (existingCartItem) {
+      // If exists, increment quantity by 1
+      const updatedItem = await Cart.findOneAndUpdate(
+        { userId, bookId },
+        { $inc: { quantity: 1 } },
+        { new: true } // Return the updated document
+      );
+      res.status(200).json(updatedItem);
+    } else {
+      // If not exists, create new item with quantity 1
+      const newItem = new Cart({
+        ...req.body,
+        quantity: 1 // Ensure quantity starts at 1 for new items
+      });
+      const savedItem = await newItem.save();
+      res.status(201).json(savedItem);
+    }
+  } catch (error) {
+    res.status(500).json({ message: "Error updating cart", error: error.message });
+  }
+};
+ 
+ const getCartItemsByUser = async (req, res) => {
+  
+
     try {
-        const { userId, book } = req.body;
+      const cartItems = await Cart.find({ userId: req.params.id });
+      res.json(cartItems);
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: 'Server error' });
+    }
+};
+const getAllCartItems = async (req, res) => {
+  try {
+    const cartItems = await Cart.find(); // fetches everything in Cart collection
+    res.status(200).json(cartItems);
+  } catch (err) {
+    console.error("Error fetching all cart items:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+const removeFromCart = async (req, res) => {
+  const {userId,bookId} = req.body;
+  
+
+
+  try {
+    const deletedItem = await Cart.findOneAndDelete({ userId, bookId });
     
-        if (!userId || !book) {
-          return res.status(400).json({ error: "User ID and book details are required." });
-        }
+    if (!deletedItem) {
+      return res.status(404).json({ message: "Item not found in cart" });
+    }
     
-        let cart = await Cart.findOne({ userId });
-    
-        if (!cart) {
-          // Create a new cart if the user doesn't have one
-          cart = new Cart({ userId, items: [] });
-        }
-    
-        // Check if the book is already in the cart
-        const existingItem = cart.items.find((item) => item.bookId === book.id);
-    
-        if (existingItem) {
-          existingItem.quantity += 1; // Increment quantity
-        } else {
-          // Add new book to the cart
-          cart.items.push({
-            bookId: book.id,
-            title: book.title,
-            price: book.price,
-            desc:book.desc,
-            author:book.desc,
-          });
-        }
-    
-        await cart.save();
-        res.json(cart.items);
-      } catch (error) {
-        console.error("Error adding to cart:", error);
-        res.status(500).json({ error: "Failed to add to cart" });
-      }
-  };
-  module.exports={fetchCart,postCart}
+    res.status(200).json({ 
+      message: "Item removed from cart",
+      removedItem: deletedItem
+    });
+  } catch (error) {
+    res.status(500).json({ 
+      message: "Error removing item from cart", 
+      error: error.message 
+    });
+  }
+};
+
+module.exports = {addToCart,getCartItemsByUser,getAllCartItems,removeFromCart};

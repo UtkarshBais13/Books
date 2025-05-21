@@ -9,14 +9,17 @@ import PromoBanner from '../../promotional/Promo'
 
 function Home() {
      const[books,setBooks] = useState([]);
-  
+     const [readersBooks, setReadersBooks] = useState([]);
   
  useEffect(()=>{
   const fetch = async()=>{
    try {
      const res = await axios.get("http://localhost:8080/api/book")
+     const resp = await axios.get("http://localhost:8080/api/readers")
+      setReadersBooks(resp.data);
+      
      setBooks(res.data)
-      console.log(res);
+      // console.log(res);
    } catch (error) {
     console.log(error);
     
@@ -37,14 +40,21 @@ function Home() {
      
    </div>
    <div className="mt-6">
-    <div className='mt-4 mb-7 ml-7 text-pretty'>
-    <h2 className='text-4xl font-semibold  '>Popular Categories in Books</h2>
+    <div className='mt-6 mb-8 ml-7 text-pretty '>
+    <h2 className='text-4xl  text-center    '>POPULAR CATEGORIES IN BOOKS</h2>
     </div>
    <BookPreviewList  books={books}/>
    </div>
    <div className="">
     <PromoBanner/>
    </div>
+   <div className='mt-6 mb-8 ml-7 text-pretty'>
+    <h2 className='text-4xl text-center  '>Reader's Section</h2>
+    </div>
+    <BookPreviewList  books={readersBooks}/>
+   
+   
+
    
    <Fotter/>
    </>

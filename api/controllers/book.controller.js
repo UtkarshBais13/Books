@@ -152,4 +152,19 @@ const getsliderbook = async(req,res)=>{
         res.status(500).json(error)
     }
   }
-  module.exports = {createbook,updatebook,deletebook,getbook,getbooks,getBooksByCategory,createsliderimages,updatesliderbook,getsliderbook};
+  const getBookforReaders = async (req, res) => {
+    try {
+      const books = await Book.find({category:"readers"});
+     
+  
+      if (books.length === 0) {
+        return res.status(404).json({ message: 'No books found for category: reader' });
+      }
+  
+      res.status(200).json(books);
+    } catch (error) {
+      console.error('Error fetching books:', error);
+      res.status(500).json({ message: 'Internal Server Errorrrr' });
+    }
+  };
+  module.exports = {createbook,updatebook,deletebook,getbook,getbooks,getBooksByCategory,createsliderimages,updatesliderbook,getsliderbook,getBookforReaders};

@@ -8,6 +8,8 @@ const bookrouter = require("./router/book.router")
 const connectDb = require("./utils/db");
 const sliderrouter = require("./router/sliderbook.router")
 const cartRouter = require("./router/cart.router")
+const searchRouter = require("./router/search.router")
+const readerRouter = require("./router/readers.router")
 
 //handling cors
 const corsOptions ={
@@ -24,6 +26,8 @@ app.use("/api/auth",router);
 app.use("/api/book",bookrouter);
 app.use("/api/slider",sliderrouter);
 app.use("/api/cart",cartRouter);
+app.use("/api/readers",readerRouter);
+app.use("/api/search",searchRouter);
 
 
 const PORT = 8080;

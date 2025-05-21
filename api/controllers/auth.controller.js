@@ -46,14 +46,16 @@ const login = async(req,res)=>{
     try {
         const {email,password} = req.body;
         const userExsist = await User.findOne({email});
-        console.log(userExsist);
+        // console.log(userExsist);
         
         if(!userExsist){
             return res.status(400).json({message:"Invalid credentialsss"});
             
         }
+        
        // const user = password==userExsist.password;
        const user = await bcrypt.compare(password,userExsist.password)
+       
 
         if(user){
             res.status(200).json({
@@ -61,6 +63,8 @@ const login = async(req,res)=>{
                 token: await userExsist.generateToken(),
                 userId : userExsist._id.toString(),
             });
+        
+            
         }
             else{
                 res.status(401).json({message:"Invalid Credinatials"})

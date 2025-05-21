@@ -2,32 +2,6 @@ import React, { useState, useEffect } from "react";
 import Backimg from "../backimg/Backimg";
 import axios from "axios";
 
-// const books = [
-//   {
-//     title: "Novel by George R. R. Martin",
-//     image: "public/bookimg6.jpg",
-//     bookName:"Game of Thrones",
-//     readLink: "https://www.amazon.in/Game-Thrones-Song-Ice-Fire/dp/0007428545",
-//     buyLink: "https://www.amazon.in/Game-Thrones-Song-Ice-Fire/dp/0007428545",
-
-//   },
-//   {
-//     image: "public/bookimg5.jpg",
-//     bookName: "Harry Potter and the Philosopher's Stone",
-//     title: "Novel by J.K. Rowling",
-//     readLink: "https://www.amazon.in/dp/1408855895",
-//     buyLink: "https://www.amazon.in/dp/1408855895",
-//   },
-//   {
-//     image: "public/bookimg4.jpg",
-//     bookName: "The Lord of the Rings",
-//     title: "Novel by J.R.R. Tolkien",
-//     readLink: "https://www.amazon.in/dp/0261102389",
-//     buyLink: "https://www.amazon.in/dp/0261102389",
-//   },
-// ];
-
-
 const Slider = () => {
   const[books,setBooks] = useState([]);
   
@@ -37,7 +11,7 @@ useEffect(()=>{
   try {
     const res = await axios.get("http://localhost:8080/api/slider")
     setBooks(res.data)
-     console.log(res);
+    //  console.log(res);
   } catch (error) {
    console.log(error);
    

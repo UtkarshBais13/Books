@@ -9,6 +9,8 @@ import Home from './components/pages/home/Home.jsx'
 import Login from './components/pages/login/Login.jsx'
 import store from './components/store/store.js'
 import {Provider} from 'react-redux'
+import CartPage from './components/pages/cartpage/Cartapage.jsx'
+import Cart from './components/cart/Cart.jsx'
 
 const router = createBrowserRouter([
     
@@ -49,6 +51,11 @@ const router = createBrowserRouter([
         },
         {
             path:"/about",
+        },
+        {
+            path:"/cart/:userId",
+            element:<Cart/>,
+
         },
       
     ],
