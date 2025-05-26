@@ -22,11 +22,6 @@ const BookPreview = ({ book }) => {
       price: book.price || 899, // fallback price
       quantity: 1,
     };
-    // console.log(payload);
-    
-   
-    
-
      const response = await axios.post("http://localhost:8080/api/cart", {
       userId: user.userId, // Make sure this is the correct field
       bookId: book._id,
