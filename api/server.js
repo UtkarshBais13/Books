@@ -10,7 +10,8 @@ const sliderrouter = require("./router/sliderbook.router")
 const cartRouter = require("./router/cart.router")
 const searchRouter = require("./router/search.router")
 const readerRouter = require("./router/readers.router")
-
+const path = require("path");
+const _dirname = path.resolve();
 //handling cors
 const corsOptions ={
     origin:"http://localhost:5173",
@@ -28,12 +29,16 @@ app.use("/api/slider",sliderrouter);
 app.use("/api/cart",cartRouter);
 app.use("/api/readers",readerRouter);
 app.use("/api/search",searchRouter);
-
-
-const PORT = 8080;
+app.use(express.static(path.join(_dirname,"/Books/dist")))
+app.get('*',(req,res)=>{
+    res.sendFile(path.resolve(_dirname,"Books","dist","index.html"));
+})
+const PORT = process.env.PORT;
 connectDb().then(()=>{
     app.listen(PORT,()=>{
         console.log(`server is running at :${PORT}`)
     });
 })
+
+
 
